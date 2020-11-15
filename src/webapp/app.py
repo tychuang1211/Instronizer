@@ -26,7 +26,7 @@ __status__ = 'Production'
 
 
 from flask import Flask, render_template, request, session, redirect, url_for, escape, Response, jsonify
-from werkzeug import secure_filename
+from werkzeug.utils import secure_filename
 from pathlib import Path
 from argparse import ArgumentParser
 import subprocess

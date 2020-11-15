@@ -6,9 +6,10 @@ RUN pip install http://download.pytorch.org/whl/cu80/torch-0.3.0.post4-cp36-cp36
 RUN pip install ffmpeg-python \
     arrow \
     uwsgi \
-    librosa==0.5.1 \
+    librosa==0.6.2 \
+    numba==0.48 \
     soundfile \
-    scipy \
+    scipy==1.2.2 \
     better_exceptions
 
 # pip install in case of compatibility issues in the future

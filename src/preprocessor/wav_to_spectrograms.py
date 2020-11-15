@@ -132,7 +132,7 @@ class Preprocessor:
                                            sr=self.sr,
                                            fmax=self.max_freq,
                                            n_mels=self.spec_height)
-        S = librosa.logamplitude(S)
+        S = librosa.amplitude_to_db(S)
         S = scipy.misc.imresize(
             S, (self.spec_height, self.spec_width), interp='bilinear')
         return librosa.util.normalize(S)
