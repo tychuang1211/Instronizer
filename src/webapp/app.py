@@ -50,6 +50,7 @@ ALLOWED_EXTENSIONS = ['.wav', '.flac', '.mp3', '.ogg']
 MAX_UPLOAD_SIZE = 50  # MB
 SPEC_LENGTH = 3  # in seconds
 UPLOADS_DELETION_TIME = 5  # in minutes
+MODEL = lightweight_classifier.load(Path('./src/checkpoints/mobilenet__YT_dataset__3s_excerpts.pth.tar'))
 
 ##
 # Print app info to the console
@@ -137,7 +138,7 @@ def classify(spectrograms_dir):
         A list of floats (output vector from model)
     """
     global args
-    return lightweight_classifier.run(spectrograms_dir, checkpoint_path=args.checkpoint)
+    return lightweight_classifier.get_prediction(MODEL, spectrograms_dir)
 
 
 @print_execution_time
