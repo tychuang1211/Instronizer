@@ -33,7 +33,7 @@ import subprocess
 import ffmpeg
 import time
 import arrow
-import uwsgi
+#import uwsgi
 from classifier.utils.printing_functions import print_execution_time
 
 # Relative to application application source root
@@ -101,8 +101,8 @@ def delete_unused_files(signum):
     delete_files(SPECS_DIR)
 
 
-uwsgi.register_signal(1, '', delete_unused_files)
-uwsgi.add_timer(1, UPLOADS_DELETION_TIME * 60) # conversion to seconds
+#uwsgi.register_signal(1, '', delete_unused_files)
+#uwsgi.add_timer(1, UPLOADS_DELETION_TIME * 60) # conversion to seconds
 
 
 @print_execution_time
@@ -122,6 +122,7 @@ def generate_spectrograms(audio_filename, time_range, length, offset):
         length=length,
         overlap=offset
     )
+    print('Executing command:\n{}',command)
     exit_code = subprocess.check_call(command, shell=True)
     spectrograms_dir = SPECS_DIR / Path(audio_filename).stem
     return exit_code, spectrograms_dir
