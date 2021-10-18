@@ -187,3 +187,29 @@ function initGetInstrumentButton(wavesurfer) {
         getInstrument();
     });
 }
+
+function getInstrumentByTime() {
+    if(wavesurfer.isPlaying()) {
+        var btnGIN = $("#getInstrumentNameButton");
+        btnGIN.prop("disabled", true);
+        var btnUFI = $("#uploadFileInput");
+        btnUFI.prop("disabled", true);
+        if (window.localStorage.getItem("SavedFilePath")) {
+            var form_data = new FormData();
+            var fileLocationOnServer = window.localStorage.getItem("SavedFilePath");
+            var start = wavesurfer.getCurrentTime();
+            var end = start+3;
+
+            form_data.append("file_path", fileLocationOnServer);
+            form_data.append("start", start);
+            form_data.append("end", end);
+
+            sendRegionsToServer(form_data);
+            $("#waitingForResultsProgress").show();
+        } else {
+            console.log("Cannot send regions because no was uploaded before");
+        }
+    }
+}
+
+setInterval ( getInstrumentByTime, 3000 );
