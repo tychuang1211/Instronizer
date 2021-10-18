@@ -162,7 +162,7 @@ class Preprocessor:
         else:
             # When you want to just put everything in specified folder
             self.output_dir.mkdir(parents=False, exist_ok=True)
-            return output_dir
+            return self.output_dir
 
     def _dump_spectrogram(self, y, songpath, counter):
         spectrogram = self._to_spectrogram(y)
