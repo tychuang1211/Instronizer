@@ -3,7 +3,7 @@
 1. Example usage:
 - Production:
     (need to install uwsgi first: pip install uwsgi)
-    uwsgi --socket 127.0.0.1:5000 --protocol=http --wsgi-file <PATH_TO_THIS_FILE> --callable app --processes 4 --threads 2 --stats 127.0.0.1:9191 \
+    uwsgi --socket 0.0.0.0:5000 --protocol=http --wsgi-file <PATH_TO_THIS_FILE> --callable app --processes 2 --threads 2 --stats 127.0.0.1:9191 \
     --pyargv '--checkpoint <PATH_TO_CHECKPOINT>'
 
 - Development:
@@ -33,6 +33,9 @@ import subprocess
 import ffmpeg
 import time
 import arrow
+import librosa
+import json
+import shutil
 #import uwsgi
 from classifier.utils.printing_functions import print_execution_time
 
@@ -45,12 +48,16 @@ CURRENT_DIR = Path(__file__).absolute().parent
 AUDIO_DIR = Path('./upload/wav')
 TMP_DIR = Path('./upload/tmp')
 SPECS_DIR = Path('./upload/specs')
+JSON_DIR = Path('./upload/json')
 PROCESSOR_PATH = CURRENT_DIR.parent / 'preprocessor/wav_to_spectrograms.py'
 ALLOWED_EXTENSIONS = ['.wav', '.flac', '.mp3', '.ogg']
 MAX_UPLOAD_SIZE = 50  # MB
 SPEC_LENGTH = 3  # in seconds
 UPLOADS_DELETION_TIME = 5  # in minutes
-MODEL = lightweight_classifier.load(Path('./src/checkpoints/mobilenet__YT_dataset__3s_excerpts.pth.tar'))
+MODEL_PATH = CURRENT_DIR.parent / 'checkpoints/mobilenet__YT_dataset__3s_excerpts.pth.tar'
+MODEL = lightweight_classifier.load(MODEL_PATH)
+#OPENMIC_PATH = CURRENT_DIR.parent / 'checkpoints/best_val_loss.pth'
+#OPENMIC_MODEL = vggish_features_extractor.load(OPENMIC_PATH)
 
 ##
 # Print app info to the console
@@ -100,6 +107,46 @@ def delete_unused_files(signum):
     delete_files(TMP_DIR)
     delete_files(SPECS_DIR)
 
+@print_execution_time
+def generate_all_prediction(audio_filename, length, offset):
+    command = 'python3 {script_path} --input {audio_path} --output-dir {spec_dir} --segment-length {length} --segment-overlap-length {overlap}'.format(
+        script_path=PROCESSOR_PATH,
+        audio_path=AUDIO_DIR / audio_filename,
+        spec_dir=SPECS_DIR,
+        length=length,
+        overlap=offset
+    )
+    print('Executing command:\n{}',command)
+    exit_code = subprocess.check_call(command, shell=True)
+    spectrograms_dir = SPECS_DIR / Path(audio_filename).stem
+
+    if exit_code == 0:
+        idxs = lightweight_classifier.get_all_instrument(MODEL, spectrograms_dir, length)
+        x, sr = librosa.load(AUDIO_DIR / audio_filename)
+        y = librosa.util.normalize(x)
+        y = abs(y)
+        vol_times = {}
+        step = int(sr*0.04)
+        for i in range(0, y.shape[0], step):
+            vol_times[float(i/sr)] = float(y[i])
+        tempo, beat_times = librosa.beat.beat_track(x, sr=sr, start_bpm=60, units='time')
+        onset_times = librosa.onset.onset_detect(x, sr=sr, wait=1, pre_avg=1, post_avg=1, pre_max=1, post_max=1, units='time')
+        
+        data = {}
+        data['volume'] = vol_times
+        data['tempo'] = beat_times.tolist()
+        data['onset'] = onset_times.tolist()
+        data['type'] = idxs
+        
+        json_filename = (audio_filename.split('.',-1)[0]+'.json')
+        outpath = str(JSON_DIR / json_filename)
+        with open(outpath, 'w') as outfile:
+            json.dump(data, outfile, indent=4)
+        
+        shutil.copy(JSON_DIR / json_filename, '/var/www/tychuang1211.github.io/json/song.json')
+        shutil.copy(AUDIO_DIR / audio_filename, '/var/www/tychuang1211.github.io/audio/song.wav')
+
+    delete_files(SPECS_DIR)
 
 #uwsgi.register_signal(1, '', delete_unused_files)
 #uwsgi.add_timer(1, UPLOADS_DELETION_TIME * 60) # conversion to seconds
@@ -113,7 +160,7 @@ def generate_spectrograms(audio_filename, time_range, length, offset):
     Returns:
         A preprocessor script's exit code
     """
-    command = 'python {script_path} --input {audio_path} --output-dir {spec_dir} --start {start} --end {end} --segment-length {length} --segment-overlap-length {overlap}'.format(
+    command = 'python3 {script_path} --input {audio_path} --output-dir {spec_dir} --start {start} --end {end} --segment-length {length} --segment-overlap-length {overlap}'.format(
         script_path=PROCESSOR_PATH,
         audio_path=AUDIO_DIR / audio_filename,
         spec_dir=SPECS_DIR,
@@ -180,13 +227,16 @@ def upload():
         # Prepare paths
         TMP_DIR.mkdir(parents=True, exist_ok=True)
         AUDIO_DIR.mkdir(parents=True, exist_ok=True)
+        JSON_DIR.mkdir(parents=True, exist_ok=True)
         tmp_path = str(TMP_DIR / filename)
         destination_path = str(AUDIO_DIR / (basename + '.wav'))
 
         # Convert supported formats to wav
         file.save(tmp_path)
         convert_to_wav(tmp_path, destination_path)
-
+        
+        generate_all_prediction(basename + '.wav', 1, 1)
+        
         # Send back to client
         return jsonify(success=True, path=str(basename + '.wav'))
 
@@ -204,6 +254,9 @@ def get_instruments():
     # If success
     if exit_code == 0:
         instruments_results_list = classify(spectrograms_dir)
+        #audio_path=AUDIO_DIR / audio_filename
+        #results = vggish_features_extractor.get_prediction(OPENMIC_MODEL, file_path)
+        print(results)
         return render_template('results.html', start=start, end=end, result=instruments_results_list)
     return jsonify(start=start, end=end, result='PREPROCESSOR_ERROR')
 
