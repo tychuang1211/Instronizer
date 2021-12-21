@@ -16,6 +16,8 @@
 3. External dependencies:
 ffmpeg-python - https://github.com/kkroening/ffmpeg-python
 lightweight_classifier.py source file
+
+uwsgi --socket 0.0.0.0:5000 --protocol=http --wsgi-file ./webapp/app.py --callable app --processes 2 --threads 2 --stats 127.0.0.1:9191 --pyargv '--checkpoint ./checkpoints/mobilenet__YT_dataset__3s_excerpts.pth.tar'
 """
 
 __copyright__ = 'Copyright 2017, Instronizer'
@@ -40,7 +42,7 @@ import shutil
 from classifier.utils.printing_functions import print_execution_time
 
 # Relative to application application source root
-from webapp import lightweight_classifier
+from webapp import lightweight_classifier, attentionMic
 
 ##
 # Constants
@@ -56,8 +58,8 @@ SPEC_LENGTH = 3  # in seconds
 UPLOADS_DELETION_TIME = 5  # in minutes
 MODEL_PATH = CURRENT_DIR.parent / 'checkpoints/mobilenet__YT_dataset__3s_excerpts.pth.tar'
 MODEL = lightweight_classifier.load(MODEL_PATH)
-#OPENMIC_PATH = CURRENT_DIR.parent / 'checkpoints/best_val_loss.pth'
-#OPENMIC_MODEL = vggish_features_extractor.load(OPENMIC_PATH)
+OPENMIC_PATH = CURRENT_DIR.parent / 'checkpoints/best_val_loss.pth'
+OPENMIC_MODEL = attentionMic.load(OPENMIC_PATH)
 
 ##
 # Print app info to the console
@@ -116,7 +118,7 @@ def generate_all_prediction(audio_filename, length, offset):
         length=length,
         overlap=offset
     )
-    print('Executing command:\n{}',command)
+    print('Executing command:\n',command)
     exit_code = subprocess.check_call(command, shell=True)
     spectrograms_dir = SPECS_DIR / Path(audio_filename).stem
 
@@ -145,7 +147,7 @@ def generate_all_prediction(audio_filename, length, offset):
         
         shutil.copy(JSON_DIR / json_filename, '/var/www/tychuang1211.github.io/json/song.json')
         shutil.copy(AUDIO_DIR / audio_filename, '/var/www/tychuang1211.github.io/audio/song.wav')
-
+    
     delete_files(SPECS_DIR)
 
 #uwsgi.register_signal(1, '', delete_unused_files)
@@ -169,7 +171,7 @@ def generate_spectrograms(audio_filename, time_range, length, offset):
         length=length,
         overlap=offset
     )
-    print('Executing command:\n{}',command)
+    print('Executing command:\n',command)
     exit_code = subprocess.check_call(command, shell=True)
     spectrograms_dir = SPECS_DIR / Path(audio_filename).stem
     return exit_code, spectrograms_dir
@@ -235,7 +237,7 @@ def upload():
         file.save(tmp_path)
         convert_to_wav(tmp_path, destination_path)
         
-        generate_all_prediction(basename + '.wav', 1, 1)
+        #generate_all_prediction(basename + '.wav', 3, 1)
         
         # Send back to client
         return jsonify(success=True, path=str(basename + '.wav'))
@@ -254,10 +256,10 @@ def get_instruments():
     # If success
     if exit_code == 0:
         instruments_results_list = classify(spectrograms_dir)
-        #audio_path=AUDIO_DIR / audio_filename
-        #results = vggish_features_extractor.get_prediction(OPENMIC_MODEL, file_path)
-        print(results)
-        return render_template('results.html', start=start, end=end, result=instruments_results_list)
+        audio_path = AUDIO_DIR / file_path
+        results = attentionMic.get_prediction(OPENMIC_MODEL, audio_path, start, end)
+        #print(instruments_results_list)
+        return render_template('results.html', start=start, end=end, result=results)
     return jsonify(start=start, end=end, result='PREPROCESSOR_ERROR')
 
 

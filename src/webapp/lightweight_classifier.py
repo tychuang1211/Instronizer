@@ -102,6 +102,7 @@ def get_all_instrument(model, input, len):
     validation_data = load_data_from_folder(input)
     aggregated_output = None
     max_value_idxs = [[] for i in range(6)] 
+    results = []
     # This loop executes once
     for step, (input, target) in enumerate(validation_data):
         input_var = torch.autograd.Variable(input, volatile=True)
@@ -112,6 +113,7 @@ def get_all_instrument(model, input, len):
 
         # Sum outputs for each instrument
         aggregated_output = torch.sum(output, dim=0)  # size = [1, ncol]
+        results.append((aggregated_output.data).cpu().numpy().reshape(-1).tolist())
 
         max_value, max_value_idx = aggregated_output.max(0)
         
@@ -121,4 +123,4 @@ def get_all_instrument(model, input, len):
         print('Instrument class-wise activation sum averaged', aggregated_output)
         print('Max: {}, instrument_idx: {}'.format(max_value, max_value_idx))
     # Arithmetic average, to preserve softmax output
-    return max_value_idxs
+    return results
