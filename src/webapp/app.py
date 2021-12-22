@@ -251,17 +251,16 @@ def get_instruments():
     end = round(float(request.form['end']))
 
     # Run preprocessing and classification on trained neural network
-    exit_code, spectrograms_dir = generate_spectrograms(
-        file_path, time_range=(start, end), length=SPEC_LENGTH, offset=SPEC_LENGTH)
+    #exit_code, spectrograms_dir = generate_spectrograms(
+    #    file_path, time_range=(start, end), length=SPEC_LENGTH, offset=SPEC_LENGTH)
 
     # If success
-    if exit_code == 0:
+    #if exit_code == 0:
         #instruments_results_list = classify(spectrograms_dir)
-        audio_path = AUDIO_DIR / file_path
-        results = classify(audio_path, start, end)
-        #print(instruments_results_list)
-        return render_template('results.html', start=start, end=end, result=results)
-    return jsonify(start=start, end=end, result='PREPROCESSOR_ERROR')
+    audio_path = AUDIO_DIR / file_path
+    results = classify(audio_path, start, end)
+    return render_template('results.html', start=start, end=end, result=results)
+    #return jsonify(start=start, end=end, result='PREPROCESSOR_ERROR')
 
 
 args = input_args()
