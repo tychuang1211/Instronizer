@@ -15,6 +15,7 @@ $(function() {
  */
 function bindOnUploadChange(wavesurfer) {
     $("#uploadFileInput").on("change", function() {
+        wavesurfer.on("play", getInstrumentByTime);
         var fileSize = this.files[0].size / 1024 / 1024;
         var fileType = this.files[0].type;
         var maxUploadSize = maxUploadSizeFromJinja || 50;
@@ -149,7 +150,7 @@ function initWavesurfer() {
         });
     });
     
-    wavesurfer.on("play", getInstrumentByTime);
+    //wavesurfer.on("play", getInstrumentByTime);
     return wavesurfer;
 }
 
