@@ -5,6 +5,13 @@ import numpy as np
 
 from classifier.models.Attention import DecisionLevelSingleAttention
 
+def cuda(X):
+    if type(X) is list:
+        X = X[0].cuda(), X[1].cuda()
+    else: 
+        X = X.cuda()
+    return X
+
 def to_numpy(x):
     return x.detach().cpu().numpy()
 
@@ -20,8 +27,7 @@ def load(checkpoint_path):
                     drop_rate=dropout_rate)
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    # Map storage to cpu
-    state_dict = torch.load(checkpoint_path, map_location=torch.device(device))
+    state_dict = torch.load(checkpoint_path)
 
     # Load model state
     model.load_state_dict(state_dict)
@@ -50,6 +56,8 @@ def get_prediction(model, audio_path, start, end):
     features = np.expand_dims(features, axis=0)
     X = features/255.0
     X = torch.tensor(X, requires_grad=False, dtype=torch.float32)
+    if torch.cuda.is_available():
+        X = cuda(X)
     
     outputs = model(X)
     
