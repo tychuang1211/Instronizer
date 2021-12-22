@@ -178,7 +178,7 @@ def generate_spectrograms(audio_filename, time_range, length, offset):
 
 
 @print_execution_time
-def classify(spectrograms_dir):
+def classify(audio_path, start, end):
     """Launches a lighweight_classifier script
 
     Args:
@@ -188,7 +188,8 @@ def classify(spectrograms_dir):
         A list of floats (output vector from model)
     """
     global args
-    return lightweight_classifier.get_prediction(MODEL, spectrograms_dir)
+    return attentionMic.get_prediction(OPENMIC_MODEL, audio_path, start, end)
+    #return lightweight_classifier.get_prediction(MODEL, spectrograms_dir)
 
 
 @print_execution_time
@@ -255,9 +256,9 @@ def get_instruments():
 
     # If success
     if exit_code == 0:
-        instruments_results_list = classify(spectrograms_dir)
+        #instruments_results_list = classify(spectrograms_dir)
         audio_path = AUDIO_DIR / file_path
-        results = attentionMic.get_prediction(OPENMIC_MODEL, audio_path, start, end)
+        results = classify(audio_path, start, end)
         #print(instruments_results_list)
         return render_template('results.html', start=start, end=end, result=results)
     return jsonify(start=start, end=end, result='PREPROCESSOR_ERROR')
