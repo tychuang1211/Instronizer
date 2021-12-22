@@ -18,16 +18,15 @@ def load(checkpoint_path):
                     emb_layers=emb_layers,
                     hidden_units=hidden_size,
                     drop_rate=dropout_rate)
+
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     # Map storage to cpu
-    if torch.cuda.is_available() == False:
-        state_dict = torch.load(checkpoint_path, map_location=torch.device('cpu'))
-    else:
-        state_dict = torch.load(checkpoint_path)
+    state_dict = torch.load(checkpoint_path, map_location=torch.device(device))
 
     # Load model state
     model.load_state_dict(state_dict)
     print('[attentionMic.py] using checkpoint: \n{}'.format(checkpoint_path))
-    model.cpu()
+    model.to(device)
 
     # Switch model to evaluate mode (validatin/testing)
     # Extremely important!
