@@ -56,14 +56,12 @@
     };
 
     // Add regions to waveform 
-    raw_results = JSON.parse("{{result}}");
+    var raw_results = JSON.parse("{{result}}");
+    var results = raw_results;
     if(checkedBoxes.length) {
         results = checkedBoxes.map(function(value, i) {
                 return [i, raw_results[value]];
         });
-    }
-    else {
-        results = raw_results;
     }
 
     var dominantInstrumentName = "";
