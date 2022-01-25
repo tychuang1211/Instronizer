@@ -197,11 +197,11 @@ async function getInstrumentByTime() {
     var btnUFI = $("#uploadFileInput");
     btnUFI.prop("disabled", true);
 
-    var prev_start = -3;
-    var start = wavesurfer.getCurrentTime();
-    var end = Math.min(start+3, wavesurfer.getDuration());
-    while (wavesurfer.isPlaying() && Math.abs(start - prev_start) >= 3) {
-        if (window.localStorage.getItem("SavedFilePath")) {
+    while (wavesurfer.isPlaying()) {
+        var prev_start = -3;
+        var start = wavesurfer.getCurrentTime();
+        var end = Math.min(start+3, wavesurfer.getDuration());
+        if (Math.abs(start - prev_start) >= 3 && window.localStorage.getItem("SavedFilePath")) {
             var form_data = new FormData();
             var fileLocationOnServer = window.localStorage.getItem("SavedFilePath");
 
@@ -211,6 +211,7 @@ async function getInstrumentByTime() {
     
             sendRegionsToServer(form_data);
             $("#waitingForResultsProgress").show();
+            prev_start = start;
         } else {
             console.log("Cannot send regions because no was uploaded before");
         }
