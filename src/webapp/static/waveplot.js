@@ -200,7 +200,7 @@ async function getInstrumentByTime() {
     var prev_start = -3;
     var start = wavesurfer.getCurrentTime();
     var end = Math.min(start+3, wavesurfer.getDuration());
-    if (wavesurfer.isPlaying() && Math.abs(start - prev_start) >= 3) {
+    while (wavesurfer.isPlaying() && Math.abs(start - prev_start) >= 3) {
         if (window.localStorage.getItem("SavedFilePath")) {
             var form_data = new FormData();
             var fileLocationOnServer = window.localStorage.getItem("SavedFilePath");
