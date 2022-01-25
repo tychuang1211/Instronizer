@@ -16,12 +16,14 @@
                     'trumpet', 'ukulele', 'violin', 'voice']
     function drawStuff() {
         var results = JSON.parse("{{result}}");
-        results = results.map(function(value, i) {
-            return [instrument_names[i], value];
-        });
         if(checkedBoxes) {
             results = checkedBoxes.map(function(value, i) {
                 return [instrument_names[value], results[value]];
+            });
+        }
+        else {
+                results = results.map(function(value, i) {
+                return [instrument_names[i], value];
             });
         }
         var header = [
