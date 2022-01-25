@@ -18,7 +18,7 @@
         var results = JSON.parse("{{result}}");
         if(checkedBoxes.length) {
             results = checkedBoxes.map(function(value, i) {
-                return [instrument_names[value], results[i]];
+                return [instrument_names[value], results[value]];
             });
         }
         else {
