@@ -12,7 +12,7 @@
         <!-- Text -->
         <div class="mdl-card__supporting-text">
             <label>Instruments: </label>
-            {%for i in range(0, len(instrument_names))%}
+            {%for i in range(0, instrument_names|length)%}
             <label><input type="checkbox" name="instruments" value="{{i}}">{{instrument_names[i]}}</label>
             {%endfor%}
 
