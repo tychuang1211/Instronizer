@@ -60,7 +60,7 @@
     var results = raw_results;
     if(checkedBoxes.length) {
         results = checkedBoxes.map(function(value, i) {
-                return [i, raw_results[value]];
+                return [raw_results[value]];
         });
     }
 
