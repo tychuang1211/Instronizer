@@ -16,15 +16,15 @@
                     'trumpet', 'ukulele', 'violin', 'voice']
     function drawStuff() {
         var results = JSON.parse("{{result}}");
-        if(checkedBoxes) {
+        if(checkedBoxes.length) {
             results = checkedBoxes.map(function(value, i) {
-                return [instrument_names[value], results[value]];
+                return [instrument_names[value], results[i]];
             });
         }
         else {
-                results = results.map(function(value, i) {
+            results = results.map(function(value, i) {
                 return [instrument_names[i], value];
-            });
+            });           
         }
         var header = [
             ['Instrument', 'Probability']
@@ -34,7 +34,7 @@
         var data = new google.visualization.arrayToDataTable(data);
 
         var options = {
-            width: 1608,
+            width: checkedBoxes.length*80,
             legend: {
                 position: 'none'
             },
