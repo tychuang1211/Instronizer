@@ -150,7 +150,6 @@ function initWavesurfer() {
         });
     });
     
-    //wavesurfer.on("play", getInstrumentByTime);
     return wavesurfer;
 }
 
@@ -197,14 +196,15 @@ async function getInstrumentByTime() {
     btnGIN.prop("disabled", true);
     var btnUFI = $("#uploadFileInput");
     btnUFI.prop("disabled", true);
-    var offset = 0;
-    for (offset = 0; offset < wavesurfer.getDuration(); offset+=3) {
+
+    var prev_start = -3;
+    var start = getCurrentTime();
+    var end = Math.min(start+3, wavesurfer.getDuration());
+    if (wavesurfer.isPlaying() && Math.abs(start - prev_start) >= 3) {
         if (window.localStorage.getItem("SavedFilePath")) {
             var form_data = new FormData();
             var fileLocationOnServer = window.localStorage.getItem("SavedFilePath");
-            var start = offset;
-            var end = Math.min(start+3, wavesurfer.getDuration());
-    
+
             form_data.append("file_path", fileLocationOnServer);
             form_data.append("start", start);
             form_data.append("end", end);
@@ -214,7 +214,7 @@ async function getInstrumentByTime() {
         } else {
             console.log("Cannot send regions because no was uploaded before");
         }
-        await wait(3000);
+        await wait(2000);
     }
 }
 
