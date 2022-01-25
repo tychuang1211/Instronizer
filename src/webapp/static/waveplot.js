@@ -198,7 +198,7 @@ async function getInstrumentByTime() {
     btnUFI.prop("disabled", true);
 
     var prev_start = -3;
-    var start = getCurrentTime();
+    var start = wavesurfer.getCurrentTime();
     var end = Math.min(start+3, wavesurfer.getDuration());
     if (wavesurfer.isPlaying() && Math.abs(start - prev_start) >= 3) {
         if (window.localStorage.getItem("SavedFilePath")) {
