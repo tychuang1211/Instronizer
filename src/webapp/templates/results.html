@@ -15,14 +15,14 @@
                     'organ', 'piano', 'saxophone', 'synthesizer', 'trombone',
                     'trumpet', 'ukulele', 'violin', 'voice']
     function drawStuff() {
-        var results = JSON.parse("{{result}}");
+        var raw_results = JSON.parse("{{result}}");
         if(checkedBoxes.length) {
             results = checkedBoxes.map(function(value, i) {
-                return [instrument_names[value], results[value]];
+                return [instrument_names[value], raw_results[value]];
             });
         }
         else {
-            results = results.map(function(value, i) {
+            results = raw_results.map(function(value, i) {
                 return [instrument_names[i], value];
             });           
         }
@@ -56,10 +56,10 @@
     };
 
     // Add regions to waveform 
-    results = JSON.parse("{{result}}");
+    raw_results = JSON.parse("{{result}}");
     if(checkedBoxes.length) {
         results = checkedBoxes.map(function(value, i) {
-                return [i, results[value]];
+                return [i, raw_results[value]];
         });
     }
 
