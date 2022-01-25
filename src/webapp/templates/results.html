@@ -9,6 +9,7 @@
     });
     google.charts.setOnLoadCallback(drawStuff);
     // instrument_names = ['Cello', 'Acoustic guitar', 'Electric guitar', 'Church organs', 'Piano', 'Violin']
+    var checkedBoxes = [...document.querySelectorAll('input[name=instruments]:checked')].map(e => e.value)
     var instrument_names = ['accordion', 'banjo', 'bass', 'cello', 'clarinet', 'cymbals',
                     'drums', 'flute', 'guitar', 'mallet_percussion', 'mandolin',
                     'organ', 'piano', 'saxophone', 'synthesizer', 'trombone',
@@ -18,6 +19,11 @@
         results = results.map(function(value, i) {
             return [instrument_names[i], value];
         });
+        if(checkedBoxes) {
+            results = checkedBoxes.map(function(value, i) {
+                return [instrument_names[value], results[value]];
+            });
+        }
         var header = [
             ['Instrument', 'Probability']
         ];

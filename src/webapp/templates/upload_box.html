@@ -11,6 +11,11 @@
     <div class="mdl-card mdl-cell mdl-cell--9-col-desktop mdl-cell--6-col-tablet mdl-cell--4-col-phone">
         <!-- Text -->
         <div class="mdl-card__supporting-text">
+            <label>Instruments: </label>
+            {%for i in range(0, len(instrument_names))%}
+            <label><input type="checkbox" name="instruments" value="{{i}}">{{instrument_names[i]}}</label>
+            {%endfor%}
+
             <h4>Choose audio file to classify</h4>
             WAV, FLAC and MP3 files below {{max_upload}}MB
         </div>

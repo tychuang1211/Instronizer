@@ -60,7 +60,10 @@ MODEL_PATH = CURRENT_DIR.parent / 'checkpoints/mobilenet__YT_dataset__3s_excerpt
 MODEL = lightweight_classifier.load(MODEL_PATH)
 OPENMIC_PATH = CURRENT_DIR.parent / 'checkpoints/best_val_loss.pth'
 OPENMIC_MODEL = attentionMic.load(OPENMIC_PATH)
-
+INSTRUMENT_NAMES = ['accordion', 'banjo', 'bass', 'cello', 'clarinet', 'cymbals',
+                    'drums', 'flute', 'guitar', 'mallet_percussion', 'mandolin',
+                    'organ', 'piano', 'saxophone', 'synthesizer', 'trombone',
+                    'trumpet', 'ukulele', 'violin', 'voice']
 ##
 # Print app info to the console
 print('\n=== APP INFO ===')
@@ -211,7 +214,7 @@ def convert_to_wav(tmp_path, dest_path):
 # Routes
 @app.route('/')
 def index():
-    return render_template('layout.html', max_upload=MAX_UPLOAD_SIZE)
+    return render_template('layout.html', max_upload=MAX_UPLOAD_SIZE, instrument_names=INSTRUMENT_NAMES)
 
 
 @app.route('/upload', methods=['POST'])
