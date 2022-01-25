@@ -56,16 +56,31 @@
     };
 
     // Add regions to waveform 
-    results = JSON.parse("{{result}}");
+    if(checkedBoxes.length) {
+        results = checkedBoxes.map(function(value, i) {
+                return [i, results[value]];
+        });
+    }
+    else {
+        results = JSON.parse("{{result}}");
+    }
+
+    var dominantInstrumentName = "";
     var maxValueIndex = -1;
-    var maxValue = -1;
+    var maxValue = 0.5;
     for (var i = 0; i < results.length; i++) {
         if (results[i] > maxValue) {
             maxValueIndex = i;
+            if(checkedBoxes.length) {
+                dominantInstrumentName += checkedBoxes[maxValueIndex] + '\n';
+            }
+            else {
+                dominantInstrumentName += instrument_names[maxValueIndex] + '\n';
+            }
             maxValue = results[i];
         }
     }
-    var dominantInstrumentName = instrument_names[maxValueIndex];
+
     console.log("dominant instrument: ", dominantInstrumentName);
     // Remove seleted region
     // And create identical but non-draggale
