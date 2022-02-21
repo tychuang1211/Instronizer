@@ -16,7 +16,8 @@
                     'trumpet', 'ukulele', 'violin', 'voice']
     var family_names = ['reed', 'string', 'string', 'string', 'reed', 'percussion', 
                     'percussion', 'woodwind', 'string', 'percussion', 'string',
-                    'keyboard', 'keyboard', 'reed', '', 'brass']
+                    'keyboard', 'keyboard', 'reed', '', 'brass',
+                    'brass', 'string', 'string', '']
     function drawStuff() {
         var raw_results = JSON.parse("{{result}}");
         /*if(checkedBoxes.length) {
@@ -106,7 +107,7 @@
     wavesurfer.on('region-created', updateLabel);
     wavesurfer.on('region-updated', updateLabel);
 
-    var regionId = dominantInstrumentName + "at {{ start }}, RANDOM_ID: " + Math.random();
+    var regionId = dominantInstrumentName.split('\n')[0] + "at {{ start }}, RANDOM_ID: " + Math.random();
     wavesurfer.addRegion({
         id: regionId,
         start: '{{ start }}', // time in seconds 
