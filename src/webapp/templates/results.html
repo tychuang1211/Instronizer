@@ -13,11 +13,11 @@
     var instrument_names = ['accordion', 'banjo', 'bass', 'cello', 'clarinet', 'cymbals',
                     'drums', 'flute', 'guitar', 'mallet_percussion', 'mandolin',
                     'organ', 'piano', 'saxophone', 'synthesizer', 'trombone',
-                    'trumpet', 'ukulele', 'violin', 'voice']
+                    '   ', 'ukulele', 'violin', 'voice']
     var family_names = ['reed', 'string', 'string', 'string', 'reed', 'percussion', 
                     'percussion', 'woodwind', 'string', 'percussion', 'string',
-                    'keyboard', 'keyboard', 'reed', '', 'brass',
-                    'brass', 'string', 'string', '']
+                    'keyboard', 'keyboard', 'reed', ' ', 'brass',
+                    'brass', 'string', 'string', ' ']
     function drawStuff() {
         var raw_results = JSON.parse("{{result}}");
         /*if(checkedBoxes.length) {
@@ -74,12 +74,14 @@
     for (var i = 0; i < results.length; i++) {
         if (results[i] > maxValue) {
             maxValueIndex = i;
+            console.log(maxValueIndex);
             if(checkedBoxes.length) {
                 if(checkedBoxes.includes(String(maxValueIndex))) {
                     dominantInstrumentName += instrument_names[maxValueIndex] + '\n';
                 }
                 else {
                     dominantInstrumentName += family_names[maxValueIndex] + '\n';
+                    console.log(family_names[maxValueIndex]);
                 }
             }
             else {
