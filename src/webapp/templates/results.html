@@ -14,18 +14,21 @@
                     'drums', 'flute', 'guitar', 'mallet_percussion', 'mandolin',
                     'organ', 'piano', 'saxophone', 'synthesizer', 'trombone',
                     'trumpet', 'ukulele', 'violin', 'voice']
+    var family_names = ['reed', 'string', 'string', 'string', 'reed', 'percussion', 
+                    'percussion', 'woodwind', 'string', 'percussion', 'string',
+                    'keyboard', 'keyboard', 'reed', '', 'brass']
     function drawStuff() {
         var raw_results = JSON.parse("{{result}}");
-        if(checkedBoxes.length) {
+        /*if(checkedBoxes.length) {
             results = checkedBoxes.map(function(value, i) {
                 return [instrument_names[value], raw_results[value]];
             });
-        }
-        else {
-            results = raw_results.map(function(value, i) {
-                return [instrument_names[i], value];
-            });           
-        }
+        }*/
+        //else {
+        results = raw_results.map(function(value, i) {
+            return [instrument_names[i], value];
+        });           
+        //}
         var header = [
             ['Instrument', 'Probability']
         ];
@@ -58,11 +61,11 @@
     // Add regions to waveform 
     var raw_results = JSON.parse("{{result}}");
     var results = raw_results;
-    if(checkedBoxes.length) {
+    /*if(checkedBoxes.length) {
         results = checkedBoxes.map(function(value, i) {
                 return [raw_results[value]];
         });
-    }
+    }*/
 
     var dominantInstrumentName = "";
     var maxValueIndex = -1;
@@ -71,7 +74,12 @@
         if (results[i] > maxValue) {
             maxValueIndex = i;
             if(checkedBoxes.length) {
-                dominantInstrumentName += instrument_names[checkedBoxes[maxValueIndex]] + '\n';
+                if(checkedBoxes.includes(instrument_names[maxValueIndex])) {
+                    dominantInstrumentName += instrument_names[maxValueIndex] + '\n';
+                }
+                else {
+                    dominantInstrumentName += family_names[maxValueIndex] + '\n';
+                }
             }
             else {
                 dominantInstrumentName += instrument_names[maxValueIndex] + '\n';
