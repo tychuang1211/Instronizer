@@ -74,7 +74,7 @@
         if (results[i] > maxValue) {
             maxValueIndex = i;
             if(checkedBoxes.length) {
-                if(checkedBoxes.includes(instrument_names[maxValueIndex])) {
+                if(checkedBoxes.includes(String(maxValueIndex))) {
                     dominantInstrumentName += instrument_names[maxValueIndex] + '\n';
                 }
                 else {
