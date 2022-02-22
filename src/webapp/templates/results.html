@@ -70,8 +70,8 @@
 
     var dominantInstrumentName = "";
     var maxValueIndex = -1;
-    var maxValue = 0.9;
-    var thresvalue = 0.8;
+    var maxValue = 0.85;
+    var thresvalue = 0.75;
     var nameSet = new Set();
     nameSet.add(' ')
     for (var i = 0; i < results.length; i++) {
@@ -93,10 +93,14 @@
             }
         }
         else if (results[i] > thresvalue) {
-            if(!nameSet.has(family_names[i])){
-                dominantInstrumentName += family_names[i] + '\n';
-                nameSet.add(family_names[i])
-            }           
+            if(checkedBoxes.length) {
+                if(checkedBoxes.includes(String(maxValueIndex))) {
+                    if(!nameSet.has(family_names[i])){
+                        dominantInstrumentName += family_names[i] + '\n';
+                        nameSet.add(family_names[i])
+                    } 
+                }
+            }
         } 
     }
 
