@@ -14,10 +14,10 @@
                     'drums', 'flute', 'guitar', 'mallet_percussion', 'mandolin',
                     'organ', 'piano', 'saxophone', 'synthesizer', 'trombone',
                     'trumpet', 'ukulele', 'violin', 'voice']
-    var family_names = ['reed', 'string', 'string', 'string', 'reed', 'percussion', 
-                    'percussion', 'woodwind', 'string', 'percussion', 'string',
-                    'keyboard', 'keyboard', 'reed', ' ', 'brass',
-                    'brass', 'string', 'string', ' ']
+    var family_names = ['reed instrument', 'string instrument', 'string instrument', 'string instrument', 'reed instrument', 'percussion', 
+                    'percussion', 'woodwind instrument', 'string instrument', 'percussion instrument', 'string instrument',
+                    'keyboard', 'keyboard', 'reed instrument', ' ', 'brass instrument',
+                    'brass instrument', 'string instrument', 'string instrument', ' ']
     function drawStuff() {
         var raw_results = JSON.parse("{{result}}");
         /*if(checkedBoxes.length) {
@@ -71,6 +71,8 @@
     var dominantInstrumentName = "";
     var maxValueIndex = -1;
     var maxValue = 0.8;
+    var nameSet = new Set();
+    nameSet.add(' ')
     for (var i = 0; i < results.length; i++) {
         if (results[i] > maxValue) {
             maxValueIndex = i;
@@ -80,8 +82,10 @@
                     dominantInstrumentName += instrument_names[maxValueIndex] + '\n';
                 }
                 else {
-                    dominantInstrumentName += family_names[maxValueIndex] + '\n';
-                    console.log(family_names[maxValueIndex]);
+                    if(!nameSet.has(family_names[maxValueIndex])){
+                        dominantInstrumentName += family_names[maxValueIndex] + '\n';
+                        nameSet.add(family_names[maxValueIndex])
+                    }
                 }
             }
             else {
