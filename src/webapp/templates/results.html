@@ -94,7 +94,7 @@
         }
         else if (results[i] > thresvalue) {
             if(checkedBoxes.length) {
-                if(checkedBoxes.includes(String(maxValueIndex))) {
+                if(checkedBoxes.includes(String(i))) {
                     if(!nameSet.has(family_names[i])){
                         dominantInstrumentName += family_names[i] + '\n';
                         nameSet.add(family_names[i])
