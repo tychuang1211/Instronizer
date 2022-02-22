@@ -70,14 +70,13 @@
 
     var dominantInstrumentName = "";
     var maxValueIndex = -1;
-    var maxValue = 0.88;
-    var thresvalue = 0.8;
+    var maxValue = 0.9;
+    var thresvalue = 0.85;
     var nameSet = new Set();
     nameSet.add(' ')
     for (var i = 0; i < results.length; i++) {
         if (results[i] > maxValue) {
             maxValueIndex = i;
-            console.log(maxValueIndex);
             if(checkedBoxes.length) {
                 if(checkedBoxes.includes(String(maxValueIndex))) {
                     dominantInstrumentName += instrument_names[maxValueIndex] + '\n';
@@ -94,9 +93,9 @@
             }
         }
         else if (results[i] > thresvalue) {
-            if(!nameSet.has(family_names[maxValueIndex])){
-                dominantInstrumentName += family_names[maxValueIndex] + '\n';
-                nameSet.add(family_names[maxValueIndex])
+            if(!nameSet.has(family_names[i])){
+                dominantInstrumentName += family_names[i] + '\n';
+                nameSet.add(family_names[i])
             }           
         } 
     }
